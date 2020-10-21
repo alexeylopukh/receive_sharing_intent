@@ -19,8 +19,6 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URLConnection
-import android.os.Build
-import android.util.Log
 
 
 class ReceiveSharingIntentPlugin(val registrar: Registrar) :
@@ -136,18 +134,20 @@ class ReceiveSharingIntentPlugin(val registrar: Registrar) :
         return when {
             intent.action == Intent.ACTION_SEND -> {
                 val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
-                val path = FileDirectory.getAbsolutePath(context, uri)
-                if (path != null) {
-                    val type = getMediaType(path)
-                    val thumbnail = getThumbnail(context, path, type)
-                    val duration = getDuration(path, type)
-                    JSONArray().put(
-                            JSONObject()
-                                    .put("path", path)
-                                    .put("type", type.ordinal)
-                                    .put("thumbnail", thumbnail)
-                                    .put("duration", duration)
-                    )
+                if (uri != null) {
+                    val path = FileDirectory.getAbsolutePath(context, uri)
+                    if (path != null) {
+                        val type = getMediaType(path)
+                        val thumbnail = getThumbnail(context, path, type)
+                        val duration = getDuration(path, type)
+                        JSONArray().put(
+                                JSONObject()
+                                        .put("path", path)
+                                        .put("type", type.ordinal)
+                                        .put("thumbnail", thumbnail)
+                                        .put("duration", duration)
+                        )
+                    } else null
                 } else null
             }
             intent.action == Intent.ACTION_SEND_MULTIPLE -> {
